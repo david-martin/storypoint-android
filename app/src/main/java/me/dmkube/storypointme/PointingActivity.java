@@ -1,5 +1,6 @@
 package me.dmkube.storypointme;
 
+import android.content.SharedPreferences;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -29,15 +30,25 @@ public class PointingActivity extends AppCompatActivity {
 
     private PointingApplication pointingApplication;
 
+
+    // TODO: onDestroy/onBack impl that cleans up the pointing application
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_pointing);
 
-        // TODO: allow setting of session in different activity before showing this activity
-        String sessionId = "android_test_session";
-        // TODO: allow setting of name in different activity before showing this activity
-        String name = "android_user_" + (new Date()).getTime();
+        SharedPreferences settings = getSharedPreferences("appPrefs", 0);
+        String sessionId = settings.getString("sessionID", null);
+        String name = settings.getString("name", null);
+        if (sessionId == null || sessionId.isEmpty()) {
+            Log.d("app", String.format("finishing activity sessionId=%s", sessionId));
+            finish();
+        }
+        if (name == null || name.isEmpty()) {
+            Log.d("app", String.format("finishing activity name=%s", name));
+            finish();
+        }
 
         Pointer me = new Pointer(name);
         pointingApplication = new PointingApplication(sessionId, me);
