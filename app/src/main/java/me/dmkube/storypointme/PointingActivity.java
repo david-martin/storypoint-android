@@ -71,6 +71,13 @@ public class PointingActivity extends AppCompatActivity {
                 // TODO: clear all user scores
 
             }
+
+            @Override
+            public void onExit(String reason) {
+                Log.d("app", String.format("PointingApplication exited with reason (%s)", reason));
+                // TODO: any cleanup needed (e.g. close websocket if its still open)?
+                finish();
+            }
         });
 
         pointersListView.setAdapter(pointersListAdapter);

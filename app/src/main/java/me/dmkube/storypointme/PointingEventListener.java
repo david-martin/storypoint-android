@@ -13,4 +13,5 @@ public interface PointingEventListener extends EventListener {
     void onScore(JSONObject event);
     void onShow(JSONObject event);
     void onClear(JSONObject event);
+    void onExit(String reason);
 }

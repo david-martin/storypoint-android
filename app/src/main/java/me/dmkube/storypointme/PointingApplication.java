@@ -50,6 +50,7 @@ public class PointingApplication {
                 Log.d("app", "Receiving text: " + text);
                 try {
                     JSONObject event = new JSONObject(text);
+                    // TODO: is switch statement OK/better here instead?
                     String eventType = event.getString("event");
                     if ("pointers".equals(eventType)) {
                         pointers.clear();
@@ -80,6 +81,7 @@ public class PointingApplication {
                     } else if ("clear".equals(eventType)) {
                         listener.onClear(event);
                     }
+                    // TODO: handling of unknown event?
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -88,7 +90,9 @@ public class PointingApplication {
 
             @Override
             public void onFailure(WebSocket webSocket, Throwable t, Response response) {
-                Log.d("app", String.format("WebSocket onFailure %s", t.getMessage()));
+                String error = String.format("WebSocket onFailure %s", t.getMessage());
+                Log.d("app", error);
+                listener.onExit(error);
             }
         });
         client.dispatcher().executorService().shutdown();
