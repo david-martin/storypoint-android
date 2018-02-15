@@ -38,6 +38,7 @@ public class PointingApplication {
         this.sessionId = sessionId;
         this.pointer = pointer;
         this.pointers = new ArrayList<>();
+        pointer.setIsMe(true);
         pointers.add(pointer);
     }
 
@@ -56,10 +57,16 @@ public class PointingApplication {
                         pointers.clear();
                         JSONArray points = event.getJSONArray("points");
                         for (int i = 0, l = points.length(); i < l; i++) {
-                            JSONObject pointer = points.getJSONObject(i);
-                            String name = pointer.getString("name");
-                            String score = pointer.optString("score", null);
-                            pointers.add(new Pointer(name, score));
+                            JSONObject jPointer = points.getJSONObject(i);
+                            String name = jPointer.getString("name");
+                            String score = jPointer.optString("score", null);
+                            Pointer tmpPointer = new Pointer(name, score);
+
+                            // need to set if it's us, so our score won't be obfuscated
+                            if (tmpPointer.getName().equals(pointer.getName())) {
+                                tmpPointer.setIsMe(true);
+                            }
+                            pointers.add(tmpPointer);
                         }
                         listener.onPointers(event);
                     } else if ("score".equals(eventType)) {
@@ -153,7 +160,7 @@ public class PointingApplication {
             }
         }
 
-        int average = totalOfScores / totalNumberOfValidScorers;
+        int average = Math.round((float) totalOfScores / (float) totalNumberOfValidScorers);
 
         return String.valueOf(average);
     }
@@ -174,5 +181,20 @@ public class PointingApplication {
         for (Pointer tmpPointer: pointers) {
             tmpPointer.reset();
         }
+    }
+
+    public void setPointerScore(String pointerScore) {
+        this.pointer.setScore(pointerScore);
+
+        // {"event":"score","score":"33"}
+        JSONObject scoreObject = new JSONObject();
+        try {
+            scoreObject.put("event", "score");
+            scoreObject.put("score", pointerScore);
+        } catch (JSONException e) {
+            e.printStackTrace();
+            return;
+        }
+        ws.send(scoreObject.toString());
     }
 }

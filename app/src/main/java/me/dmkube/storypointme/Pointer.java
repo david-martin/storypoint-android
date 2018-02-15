@@ -9,6 +9,7 @@ class Pointer {
     private String name;
     private String score = "";
     private boolean obfuscateScore = true;
+    private boolean isMe = false;
 
     Pointer(String name) {
         this.name = name;
@@ -17,6 +18,10 @@ class Pointer {
     public Pointer(String name, String score) {
         this.name = name;
         this.score = score;
+    }
+
+    public void setIsMe(boolean isMe) {
+        this.isMe = isMe;
     }
 
     public String getName() {
@@ -47,7 +52,7 @@ class Pointer {
     public String toString() {
         String scoreAsString = "-";
         if (score != null && !score.isEmpty()) {
-            if (obfuscateScore) {
+            if (obfuscateScore && !isMe) {
                 scoreAsString = "✓";
             } else {
                 scoreAsString = score;

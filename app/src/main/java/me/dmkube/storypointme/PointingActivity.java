@@ -4,13 +4,14 @@ import android.content.SharedPreferences;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
 import org.json.JSONObject;
 
-public class PointingActivity extends AppCompatActivity {
+public class PointingActivity extends AppCompatActivity implements View.OnClickListener {
 
     private PointingApplication pointingApplication;
 
@@ -18,6 +19,16 @@ public class PointingActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_pointing);
+
+        findViewById(R.id.button1).setOnClickListener(this);
+        findViewById(R.id.button2).setOnClickListener(this);
+        findViewById(R.id.button3).setOnClickListener(this);
+        findViewById(R.id.button5).setOnClickListener(this);
+        findViewById(R.id.button8).setOnClickListener(this);
+        findViewById(R.id.button13).setOnClickListener(this);
+        findViewById(R.id.button21).setOnClickListener(this);
+        findViewById(R.id.button33).setOnClickListener(this);
+        findViewById(R.id.buttonUnknown).setOnClickListener(this);
 
         SharedPreferences settings = getSharedPreferences("appPrefs", 0);
         String sessionId = settings.getString("sessionID", null);
@@ -49,6 +60,7 @@ public class PointingActivity extends AppCompatActivity {
                 runOnUiThread(() -> {
                     pointersListAdapter.notifyDataSetChanged();
                 });
+                updateStoryDescription();
             }
             @Override
             public void onShow(JSONObject event) {
@@ -92,5 +104,50 @@ public class PointingActivity extends AppCompatActivity {
         TextView storyDescriptionView = findViewById(R.id.storyDescriptionView);
         runOnUiThread(() -> storyDescriptionView.setText(String.format("Name: %s\nSession ID: %s\nAverage : %s", pointingApplication.getPointer().getName(), pointingApplication.getSessionId(), pointingApplication.calculateAverageScores())));
 
+    }
+
+    @Override
+    public void onClick(View view) {
+        switch (view.getId()) {
+
+            case R.id.button1:
+                pointingApplication.setPointerScore("1");
+                break;
+
+            case R.id.button2:
+                pointingApplication.setPointerScore("2");
+                break;
+
+            case R.id.button3:
+                pointingApplication.setPointerScore("3");
+                break;
+
+            case R.id.button5:
+                pointingApplication.setPointerScore("5");
+                break;
+
+            case R.id.button8:
+                pointingApplication.setPointerScore("8");
+                break;
+
+            case R.id.button13:
+                pointingApplication.setPointerScore("13");
+                break;
+
+            case R.id.button21:
+                pointingApplication.setPointerScore("21");
+                break;
+
+            case R.id.button33:
+                pointingApplication.setPointerScore("33");
+                break;
+
+            case R.id.buttonUnknown:
+                pointingApplication.setPointerScore("?");
+                break;
+
+            default:
+                break;
+        }
     }
 }
