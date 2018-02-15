@@ -7,7 +7,8 @@ package me.dmkube.storypointme;
 class Pointer {
 
     private String name;
-    private String score;
+    private String score = "";
+    private boolean obfuscateScore = true;
 
     Pointer(String name) {
         this.name = name;
@@ -34,14 +35,31 @@ class Pointer {
         this.score = score;
     }
 
+    public boolean isObfuscateScore() {
+        return obfuscateScore;
+    }
+
+    public void setObfuscateScore(boolean obfuscateScore) {
+        this.obfuscateScore = obfuscateScore;
+    }
+
     @Override
     public String toString() {
         String scoreAsString = "-";
-        if (score != null) {
-            scoreAsString = score;
+        if (score != null && !score.isEmpty()) {
+            if (obfuscateScore) {
+                scoreAsString = "✓";
+            } else {
+                scoreAsString = score;
+            }
         }
 
         // TODO: obfuscation of score?
         return String.format("%s : %s", name, scoreAsString);
+    }
+
+    public void reset() {
+        obfuscateScore = true;
+        score = "";
     }
 }

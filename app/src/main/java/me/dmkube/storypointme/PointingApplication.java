@@ -25,8 +25,9 @@ public class PointingApplication {
     private String sessionId;
     private Pointer pointer;
     private List<Pointer> pointers;
-    private boolean showingScores = false;
     private PointingEventListener listener;
+    private WebSocket ws;
+    private boolean showingScores = false;
 
     /**
      *
@@ -43,8 +44,7 @@ public class PointingApplication {
     public void start() {
         OkHttpClient client = new OkHttpClient();
         Request request = new Request.Builder().url(String.format(STORYPOINT_WS_ENDPOINT, sessionId, pointer.getName())).build();
-        WebSocket ws = client.newWebSocket(request, new WebSocketListener() {
-            // TODO: is it necessary to override any other methods?
+        ws = client.newWebSocket(request, new WebSocketListener() {
             @Override
             public void onMessage(WebSocket webSocket, String text) {
                 Log.d("app", "Receiving text: " + text);
@@ -67,7 +67,7 @@ public class PointingApplication {
                         String score = event.getString("score");
 
                         for (Pointer eventPointer : pointers) {
-                            Log.d("app", String.format("pointer=%s", eventPointer.toString()));
+                            Log.d("app", String.format("pointer=%s", eventPointer.getName()));
 
                             if (eventPointer.getName().equals(name)) {
                                 eventPointer.setScore(score);
@@ -80,8 +80,9 @@ public class PointingApplication {
                         listener.onShow(event);
                     } else if ("clear".equals(eventType)) {
                         listener.onClear(event);
+                    } else {
+                        Log.d("app", String.format("Unknown eventType %s event=%s", eventType, event));
                     }
-                    // TODO: handling of unknown event?
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -98,6 +99,12 @@ public class PointingApplication {
         client.dispatcher().executorService().shutdown();
     }
 
+    public void finish() {
+        if (ws != null) {
+            ws.close(1000, "Finishing Application");
+        }
+    }
+
     public String getSessionId() {
         return sessionId;
     }
@@ -106,13 +113,6 @@ public class PointingApplication {
         this.sessionId = sessionId;
     }
 
-    public boolean isShowingScores() {
-        return showingScores;
-    }
-
-    public void setShowingScores(boolean showingScores) {
-        this.showingScores = showingScores;
-    }
 
     public List<Pointer> getPointers() {
         return pointers;
@@ -140,13 +140,39 @@ public class PointingApplication {
             return "-";
         }
 
-        int average = 0;
-        // TODO: calculate the avg
+        int totalOfScores = 0;
+        int totalNumberOfValidScorers = 0;
+        for (Pointer tmpPointer: pointers) {
+            try {
+                int score = Integer.valueOf(tmpPointer.getScore()).intValue();
+                totalOfScores += score;
+                totalNumberOfValidScorers++;
+            } catch (NumberFormatException e) {
+                // Ignore
+                Log.d("app", String.format("Ignoring NumberFormatException for score=%s", tmpPointer.getScore()));
+            }
+        }
+
+        int average = totalOfScores / totalNumberOfValidScorers;
 
         return String.valueOf(average);
     }
 
     public void setEventListener(PointingEventListener listener) {
         this.listener = listener;
+    }
+
+    public void showPointerScores() {
+        showingScores = true;
+        for (Pointer tmpPointer: pointers) {
+            tmpPointer.setObfuscateScore(false);
+        }
+    }
+
+    public void clearPointerScores() {
+        showingScores = false;
+        for (Pointer tmpPointer: pointers) {
+            tmpPointer.reset();
+        }
     }
 }
