@@ -100,12 +100,12 @@
             android:text="21" />
 
         <Button
-            android:id="@+id/button33"
+            android:id="@+id/button34"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_columnWeight="1"
             android:layout_gravity="fill"
-            android:text="33" />
+            android:text="34" />
 
         <Button
             android:id="@+id/buttonUnknown"
