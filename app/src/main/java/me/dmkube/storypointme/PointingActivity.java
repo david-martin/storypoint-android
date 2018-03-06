@@ -27,7 +27,7 @@ public class PointingActivity extends AppCompatActivity implements View.OnClickL
         findViewById(R.id.button8).setOnClickListener(this);
         findViewById(R.id.button13).setOnClickListener(this);
         findViewById(R.id.button21).setOnClickListener(this);
-        findViewById(R.id.button33).setOnClickListener(this);
+        findViewById(R.id.button34).setOnClickListener(this);
         findViewById(R.id.buttonUnknown).setOnClickListener(this);
 
         SharedPreferences settings = getSharedPreferences("appPrefs", 0);
@@ -138,8 +138,8 @@ public class PointingActivity extends AppCompatActivity implements View.OnClickL
                 pointingApplication.setPointerScore("21");
                 break;
 
-            case R.id.button33:
-                pointingApplication.setPointerScore("33");
+            case R.id.button34:
+                pointingApplication.setPointerScore("34");
                 break;
 
             case R.id.buttonUnknown:

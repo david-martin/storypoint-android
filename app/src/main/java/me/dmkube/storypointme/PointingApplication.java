@@ -186,7 +186,7 @@ public class PointingApplication {
     public void setPointerScore(String pointerScore) {
         this.pointer.setScore(pointerScore);
 
-        // {"event":"score","score":"33"}
+        // {"event":"score","score":"34"}
         JSONObject scoreObject = new JSONObject();
         try {
             scoreObject.put("event", "score");
